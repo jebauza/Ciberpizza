@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +13,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['prefix' => 'auth'], function () {
+    Route::post('login', 'Api\AuthApiController@login')->name('api.auth.login');
+    Route::post('signup', 'Api\AuthApiController@signUp')->name('api.auth.signUp');
+
+    Route::group(['middleware' =>  ['auth:api']], function() {
+        Route::get('logout', 'Api\AuthApiController@logout')->name('api.auth.logout');
+        Route::get('user', 'Api\AuthApiController@user')->name('api.auth.user');
+    });
 });
