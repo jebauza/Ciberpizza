@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PizzaResource;
+use App\Http\Requests\PizzaStoreUpdateRequest;
 
 class PizzaApiController extends Controller
 {
@@ -20,8 +21,9 @@ class PizzaApiController extends Controller
     {
         $pizzas = Pizza::name($request->name)
                         ->orderBy('name')
-                        ->paginate();
+                        ->get();
 
+        PizzaResource::withoutWrapping();
         return PizzaResource::collection($pizzas);
     }
 
@@ -31,7 +33,7 @@ class PizzaApiController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PizzaStoreUpdateRequest $request)
     {
         try {
             DB::beginTransaction();
@@ -61,7 +63,11 @@ class PizzaApiController extends Controller
      */
     public function show($id)
     {
-        //
+        if (!$pizza = Pizza::find($id)) {
+            return response()->json(['message' => 'Not found'], 404);
+        }
+
+        return response()->json(new PizzaResource($pizza));
     }
 
     /**
@@ -71,9 +77,30 @@ class PizzaApiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(PizzaStoreUpdateRequest $request, $id)
     {
-        //
+        if (!$pizza = Pizza::find($id)) {
+            return response()->json(['message' => 'Not found'], 404);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $pizza = new Pizza($request->all());
+            if ($pizza->save()) {
+                $pizza->ingredients()->sync($request->ingredients);
+            }
+
+            DB::commit();
+            return response()->json([
+                'message'=>'Save successfully',
+                'pizza'=> new PizzaResource($pizza)
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -84,6 +111,15 @@ class PizzaApiController extends Controller
      */
     public function destroy($id)
     {
-        //
+        if (!$pizza = Pizza::find($id)) {
+            return response()->json(['message' => 'Not found'], 404);
+        }
+
+        $pizza->delete();
+
+        return response()->json([
+            'message'=>'Deleted successfully',
+            'pizza'=> new PizzaResource($pizza)
+        ]);
     }
 }

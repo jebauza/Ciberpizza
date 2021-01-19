@@ -34,7 +34,7 @@ Route::middleware(['auth:api'])->name('api.')->group(function() {
         Route::delete('/{id}/destroy', 'Api\IngredientApiController@destroy')->name('destroy');
     });
 
-    // Ingredients
+    // Pizzas
     Route::prefix('pizzas')->name('pizzas.')->group(function () {
         Route::get('/', 'Api\PizzaApiController@index')->name('index');
         Route::post('/store', 'Api\PizzaApiController@store')->name('store');

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\IngredientResource;
+use App\Http\Requests\IngredientStoreUpdateRequest;
 
 class IngredientApiController extends Controller
 {
@@ -20,8 +21,9 @@ class IngredientApiController extends Controller
     {
         $ingredients = Ingredient::name($request->name)
                         ->orderBy('name')
-                        ->paginate();
+                        ->get();
 
+        IngredientResource::withoutWrapping();
         return IngredientResource::collection($ingredients);
     }
 
