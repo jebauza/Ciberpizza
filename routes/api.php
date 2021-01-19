@@ -22,3 +22,25 @@ Route::group(['prefix' => 'auth'], function () {
         Route::get('user', 'Api\AuthApiController@user')->name('api.auth.user');
     });
 });
+
+Route::middleware(['auth:api'])->name('api.')->group(function() {
+
+    // Ingredients
+    Route::prefix('ingredients')->name('ingredients.')->group(function () {
+        Route::get('/', 'Api\IngredientApiController@index')->name('index');
+        Route::post('/store', 'Api\IngredientApiController@store')->name('store');
+        Route::get('/{id}/show', 'Api\IngredientApiController@show')->name('show');
+        Route::put('/{id}/update', 'Api\IngredientApiController@update')->name('update');
+        Route::delete('/{id}/destroy', 'Api\IngredientApiController@destroy')->name('destroy');
+    });
+
+    // Ingredients
+    Route::prefix('pizzas')->name('pizzas.')->group(function () {
+        Route::get('/', 'Api\PizzaApiController@index')->name('index');
+        Route::post('/store', 'Api\PizzaApiController@store')->name('store');
+        Route::get('/{id}/show', 'Api\PizzaApiController@show')->name('show');
+        Route::put('/{id}/update', 'Api\PizzaApiController@update')->name('update');
+        Route::delete('/{id}/destroy', 'Api\PizzaApiController@destroy')->name('destroy');
+    });
+
+});

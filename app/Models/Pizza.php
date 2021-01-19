@@ -17,4 +17,12 @@ class Pizza extends Model
         return $this->belongsToMany(Ingredient::class, 'pizza_ingredient', 'pizza_id', 'ingredient_id')
                     ->withTimestamps();
     }
+
+    // Scopes
+    public function scopeName($query, $name)
+    {
+        if($name){
+            return $query->where('name', 'like', "%$name%");
+        }
+    }
 }
