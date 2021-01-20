@@ -86,7 +86,7 @@ class PizzaApiController extends Controller
         try {
             DB::beginTransaction();
 
-            $pizza = new Pizza($request->all());
+            $pizza->fill($request->all());
             if ($pizza->save()) {
                 $pizza->ingredients()->sync($request->ingredients);
             }

@@ -48,10 +48,9 @@ class AuthApiController extends Controller
 
         $credentials = request(['email', 'password']);
 
-        if (!Auth::attempt($credentials))
-            return response()->json([
-                'message' => 'Unauthorized'
-            ], 401);
+        if(!Auth::attempt($credentials)) {
+            return response()->json(['errors' => ['email' => ["These credentials do not match our records."]]], 422);
+        }
 
         $user = $request->user();
         $tokenResult = $user->createToken($user->email);
@@ -86,6 +85,8 @@ class AuthApiController extends Controller
      */
     public function user(Request $request)
     {
+        /* $user->createToken($user->email);
+        $user = $request->user()->getT */
         return response()->json($request->user());
     }
 }
