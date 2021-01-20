@@ -36,11 +36,17 @@ Route::middleware(['auth:api'])->name('api.')->group(function() {
 
     // Pizzas
     Route::prefix('pizzas')->name('pizzas.')->group(function () {
-        Route::get('/', 'Api\PizzaApiController@index')->name('index');
+        Route::get('/', 'Api\PizzaApiController@index')->name('index')->withoutMiddleware(['auth:api']);
         Route::post('/store', 'Api\PizzaApiController@store')->name('store');
         Route::get('/{id}/show', 'Api\PizzaApiController@show')->name('show');
         Route::put('/{id}/update', 'Api\PizzaApiController@update')->name('update');
         Route::delete('/{id}/destroy', 'Api\PizzaApiController@destroy')->name('destroy');
+    });
+
+    // Order
+    Route::prefix('orders')->name('orders.')->group(function () {
+        Route::get('/', 'Api\OrderApiController@index')->name('index');
+        Route::post('/store', 'Api\OrderApiController@store')->name('store');
     });
 
 });

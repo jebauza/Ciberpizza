@@ -37,6 +37,7 @@ export default {
             .then(res => {
                 this.authUser = res.data;
                 localStorage.setItem('authUser', JSON.stringify(this.authUser));
+                EventBus.$emit('updateAuthenticatedUser');
             })
             .catch(err => {
                 localStorage.removeItem('access_token');
@@ -44,6 +45,7 @@ export default {
                 delete axios.defaults.headers.common['Authorization'];
                 this.authUser = null;
                 this.$router.push({name: 'home'});
+                EventBus.$emit('updateAuthenticatedUser');
             });
         },
     },

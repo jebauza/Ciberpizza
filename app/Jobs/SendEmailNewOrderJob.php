@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use Mail;
 use App\Mail\NewOrderEmail;
+use App\Models\Order;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -14,16 +15,16 @@ class SendEmailNewOrderJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $details;
+    protected $order;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($details)
+    public function __construct(Order $order)
     {
-        $this->details = $details;
+        $this->order = $order;
     }
 
     /**
@@ -33,8 +34,8 @@ class SendEmailNewOrderJob implements ShouldQueue
      */
     public function handle()
     {
-        $email = new NewOrderEmail();
+        $email = new NewOrderEmail($this->order);
 
-        Mail::to($this->details['email'])->send($email);
+        Mail::to($this->order->user->email)->send($email);
     }
 }

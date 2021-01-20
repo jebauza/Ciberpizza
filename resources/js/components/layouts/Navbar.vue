@@ -214,7 +214,6 @@ export default {
         },
         showSignup() {
             this.erros = {};
-            console.log('entre');
             $('#modalLogin').modal('hide');
             $('#modalSingup').modal('show');
         },

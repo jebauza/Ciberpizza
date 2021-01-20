@@ -20,6 +20,7 @@ class PizzaApiController extends Controller
     public function index(Request $request)
     {
         $pizzas = Pizza::name($request->name)
+                        ->with('ingredients')
                         ->orderBy('name')
                         ->get();
 

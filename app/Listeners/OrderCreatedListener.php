@@ -27,9 +27,6 @@ class OrderCreatedListener
      */
     public function handle(OrderCreatedEvent $event)
     {
-        $details = [
-            'email' => 'jebauza1989@gmail.com'
-        ];
-        SendEmailNewOrderJob::dispatch($details);
+        SendEmailNewOrderJob::dispatch($event->order);
     }
 }

@@ -6,7 +6,7 @@
 </head>
 
 <body>
-    <h1>Prueba de email</h1>
+    <h1>Cliente: {{ $clientName }}</h1>
 </body>
 
 </html>
