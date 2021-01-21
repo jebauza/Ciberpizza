@@ -15,13 +15,15 @@ class OrderApiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::orderBy('updated_at')
+        $orders = Order::client($request->client)
+                        ->pizza($request->pizza)
                         ->with('user','pizzas')
+                        ->orderBy('updated_at', 'DESC')
                         ->get();
 
-        PizzaResource::withoutWrapping();
+        OrderResource::withoutWrapping();
         return OrderResource::collection($orders);
     }
 

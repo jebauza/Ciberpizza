@@ -36,14 +36,12 @@ class NewOrderEmail extends Mailable
      */
     public function build()
     {
-        $client = $this->order->user;
-
-
+        $order = $this->order->fresh(['user','pizzas']);
 
         return $this->subject('Nueva compra en CiberPizza')
                     ->view('emails.SendNewOrder')
                     ->with([
-                        'clientName' => $client->name,
+                        'order' => $this->order,
                     ]);
     }
 }

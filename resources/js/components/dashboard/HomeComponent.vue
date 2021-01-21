@@ -33,12 +33,11 @@
 
         </div>
 
-        <!-- Singup -->
         <div class="modal fade" id="modalTime" tabindex="-1" role="dialog" aria-hidden="true" >
-            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">Selecione hora</h4>
+                        <h4 class="modal-title">Seleccione hora</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
@@ -49,10 +48,10 @@
                             <div class="form-row">
 
                                 <div class="form-group col-12">
-                                    <label for="time" :class="['control-label', errors.time ? 'text-danger' : '']">Hora</label>
-                                    <date-picker v-model="form.time" :config="pickerOptions"></date-picker>
-                                    <small v-if="errors.time" class="form-control-feedback text-danger">
-                                        {{ errors.time[0] }}
+                                    <label for="time" :class="['control-label', errors.delivery_time ? 'text-danger' : '']">Hora</label>
+                                    <date-picker v-model="form.delivery_time" :config="pickerOptions"></date-picker>
+                                    <small v-if="errors.delivery_time" class="form-control-feedback text-danger">
+                                        {{ errors.delivery_time[0] }}
                                     </small>
                                 </div>
 
@@ -75,7 +74,7 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import datePicker from 'vue-bootstrap-datetimepicker';
 import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
-import moment from 'moment'
+import moment from 'moment';
 
 
 export default {
@@ -123,22 +122,21 @@ export default {
         showTime(pizza) {
             this.errors = {};
             this.form = {
-                time: '',
+                delivery_time: '',
                 pizza: pizza
             };
             $('#modalTime').modal('show');
         },
         storeOrder() {
-            console.log(this.form);
-            this.loaded = false;
+            this.fullscreenLoading = true;
             const url = `/api/orders/store`;
 
             axios.post(url,{
-                delivery_time: moment(this.form.time, 'DD/MM/YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
+                delivery_time: moment(this.form.delivery_time, 'DD/MM/YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
                 price: this.form.pizza.price,
                 pizzas: [this.form.pizza.id]
             }).then(res => {
-                this.loaded = true;
+                this.fullscreenLoading = false;
                 Swal.fire({
                     title: res.data.message,
                     icon: "success",
@@ -147,7 +145,7 @@ export default {
                 });
                 $('#modalTime').modal('hide');
             }).catch(err => {
-                this.loaded = true;
+                this.fullscreenLoading = false;
                 if(err.response && err.response.status == 422) {
                     this.errors = err.response.data.errors;
                 }else if(err.response.data.msg_error || err.response.data.message) {

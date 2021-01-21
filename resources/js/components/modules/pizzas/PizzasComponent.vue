@@ -4,6 +4,7 @@
         <div v-if="!loaded" class="overlay"><i class="fas fa-2x fa-sync-alt fa-spin"></i></div>
 
         <div class="card-header">
+            <h1 class="card-title">Pizza</h1>
             <div class="card-tools">
                 <button @click="openModalAddEdit('add')" class="btn btn-info btn-sm">
                     <i class="fas fa-plus-square"> Nueva Pizza</i>
@@ -62,7 +63,7 @@
                                         <td v-text="pizza.description"></td>
                                         <td>{{ pizza.ingredients.map((i) => i.name).join(', ') }}</td>
                                         <td>
-                                            <button @click="openModalAddEdit('edit', pizza)"
+                                            <button v-if="false" @click="openModalAddEdit('edit', pizza)"
                                                 class="btn btn-flat btn-success btn-xs" title="Editar">
                                                 <i class="fas fa-eye"></i>
                                             </button>
@@ -148,7 +149,7 @@ export default {
             this.loaded = false;
             const url = `/api/pizzas/${pizza.id}/destroy`;
 
-            axios.get(url).then(res => {
+            axios.delete(url).then(res => {
                     this.loaded = true;
                     Swal.fire({
                         title: res.data.message,

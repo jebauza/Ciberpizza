@@ -13,8 +13,8 @@
         </ul> -->
 
         <ul class="navbar-nav">
-            <li class="nav-item text-white">
-                <h2>CiberPizza</h2>
+            <li class="nav-item">
+                <router-link :to="{path: 'home'}" class="nav-link"><h2 class="text-white">CiberPizza</h2></router-link>
             </li>
         </ul>
         <ul class="navbar-nav ml-auto">
@@ -26,10 +26,13 @@
                 <li class="nav-item d-none d-sm-inline-block">
                     <router-link :to="{path: 'ingredients'}" class="nav-link">CRUD Ingredientes</router-link>
                 </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <router-link :to="{path: 'orders'}" class="nav-link">Ordenes</router-link>
+                </li>
                 <li class="nav-item dropdown ml-3">
                     <a data-toggle="dropdown" href="#" class="user-profile dropdown-toggle text-white" aria-expanded="false">
                         <img src="https://quepar.local/img/user-default.png" alt="Cinque Terre" class="rounded-circle" width="40" height="40">
-                            <span class="text-white"> Jorge Ernesto</span>
+                            <span class="text-white"> {{ auth_user.name }}</span>
                         </a>
 
                     <div class="dropdown-menu dropdown-menu-md dropdown-menu-right" style="left: inherit; right: 0px;">

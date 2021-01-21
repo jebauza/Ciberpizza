@@ -44,4 +44,15 @@ class User extends Authenticatable
         return $this->hasMany(Order::class, 'user_id', 'id');
     }
 
+
+    /* Scopes */
+    public function scopeNameEmail($query, $value = null)
+    {
+        if($value){
+            return $query->where('name', 'like', "%$value%")
+                            ->orWhere('last_name', 'like', "%$value%")
+                            ->orWhere('email', 'like', "%$value%");
+        }
+    }
+
 }

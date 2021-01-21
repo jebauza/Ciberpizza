@@ -33,28 +33,14 @@ export const routes = [{
             accessVerification(to, from, next);
         },
     },
-    /* {
-        path: '/users',
-        name: 'users',
-        component: require('./components/modules/user/UserListComponent').default,
+    {
+        path: '/orders',
+        name: 'orders',
+        component: require('./components/modules/orders/OrdersComponent').default,
         beforeEnter: (to, from, next) => {
-            accessVerification(to, from, next, 'users.index');
+            accessVerification(to, from, next);
         },
     },
-    {
-        path: '/users/:id/profile/',
-        name: 'profile',
-        component: require('./components/modules/user/UserProfileComponent').default,
-        props: true
-    },
-    {
-        path: '/roles',
-        name: 'roles',
-        component: require('./components/modules/role/RoleListComponent.vue').default,
-        beforeEnter: (to, from, next) => {
-            accessVerification(to, from, next, 'roles.index');
-        }
-    }, */
 
 
 

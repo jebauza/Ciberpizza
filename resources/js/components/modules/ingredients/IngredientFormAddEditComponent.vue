@@ -1,10 +1,10 @@
 <template>
-    <div class="modal fade" id="modalPizzaFormAddEdit" tabindex="-1" role="dialog" aria-hidden="true" >
+    <div class="modal fade" id="modalIngredientFormAddEdit" tabindex="-1" role="dialog" aria-hidden="true" >
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 v-if="modalType=='add'" class="modal-title">Nueva Pizza</h4>
-                    <h4 v-else class="modal-title">Editar Pizza</h4>
+                    <h4 v-if="modalType=='add'" class="modal-title">Nuevo Ingrediente</h4>
+                    <h4 v-else class="modal-title">Editar Ingrediente</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
@@ -35,26 +35,6 @@
                                 </small>
                             </div>
 
-                            <div class="form-group col-12">
-                                <label for="Ingredients" :class="['control-label', errors.ingredients ? 'text-danger' : '']">Ingredientes</label>
-                                <!-- <input type="text" :class="['form-control', errors.roles ? 'is-invalid' : '']" name="roles" placeholder="Roles"> -->
-                                <multiselect
-                                    v-model="form.ingredients"
-                                    :options="allIngredients"
-                                    placeholder="Ingredientes"
-                                    label="name"
-                                    track-by="id"
-                                    :multiple="true"
-                                    :close-on-select="false"
-                                    :clear-on-select="false"
-                                    :preserve-search="true"
-                                    >
-                                </multiselect>
-                                <small v-if="errors.ingredients" class="form-control-feedback text-danger">
-                                    {{ errors.ingredients[0] }}
-                                </small>
-                            </div>
-
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -70,22 +50,15 @@
 </template>
 
 <script>
-import Multiselect from 'vue-multiselect';
 
 export default {
-    components: {Multiselect},
-    mounted() {
-        this.getAllIngredients();
-    },
     data() {
         return {
             modalType: 'add', //add, edit
-            allIngredients: [],
             form: {
                 name: '',
                 price: '',
                 description: '',
-                ingredients: [],
                 id: ''
             },
             errors: {},
@@ -94,44 +67,39 @@ export default {
         }
     },
     methods: {
-        showForm(action, pizza = null) {
+        showForm(action, ingredient = null) {
             if(this.modalType != action) {
                 this.clearForm();
             }
             this.modalType = action;
-            if(this.modalType === 'edit' && pizza) {
+            if(this.modalType === 'edit' && ingredient) {
                 this.form = {
-                    name: pizza.name,
-                    price: pizza.price,
-                    description: pizza.description,
-                    ingredients: pizza.ingredients,
-                    id: pizza.id
+                    name: ingredient.name,
+                    price: ingredient.price,
+                    description: ingredient.description,
+                    id: ingredient.id
                 }
             }
             this.erros = {};
-            $('#modalPizzaFormAddEdit').modal('show');
+            $('#modalIngredientFormAddEdit').modal('show');
         },
         actionStoreUpdate() {
             this.fullscreenLoading = true;
             switch (this.modalType) {
                 case 'add':
-                    this.storePizza();
+                    this.storeIngredient();
                     break;
 
                 case 'edit':
-                    this.updatePizza();
+                    this.updateIngredient();
                     break;
             }
         },
-        storePizza() {
-            const url = '/api/pizzas/store';
+        storeIngredient() {
+            const url = '/api/ingredients/store';
 
-            axios.post(url, {
-                    name: this.form.name,
-                    price: this.form.price,
-                    description: this.form.description,
-                    ingredients: this.form.ingredients.map(item => item.id)
-            }).then(res => {
+            axios.post(url, this.form)
+            .then(res => {
                 this.fullscreenLoading = false;
                 Swal.fire({
                     title: res.data.message,
@@ -139,15 +107,14 @@ export default {
                     timer: 1500,
                     showConfirmButton: false
                 });
-                this.$emit('updatePizzaList', 'add');
-                $('#modalPizzaFormAddEdit').modal('hide');
+                this.$emit('updateIngredientList', 'add');
+                $('#modalIngredientFormAddEdit').modal('hide');
                 this.clearForm();
             })
             .catch(err => {
                 this.fullscreenLoading = false;
                 if(err.response && err.response.status == 422) {
                     this.errors = err.response.data.errors;
-                    this.errorsIngredients();
                 }else if(err.response.data.msg_error || err.response.data.message) {
                     Swal.fire({
                         title: 'Error!',
@@ -159,15 +126,10 @@ export default {
                 }
             });
         },
-        updatePizza() {
-            const url = `/api/pizzas/${this.form.id}/update`;
+        updateIngredient() {
+            const url = `/api/ingredients/${this.form.id}/update`;
 
-            axios.put(url, {
-                    name: this.form.name,
-                    price: this.form.price,
-                    description: this.form.description,
-                    ingredients: this.form.ingredients.map(item => item.id)
-            }).then(res => {
+            axios.put(url, this.form).then(res => {
                 this.fullscreenLoading = false;
                 Swal.fire({
                     title: res.data.message,
@@ -175,15 +137,14 @@ export default {
                     timer: 1500,
                     showConfirmButton: false
                 });
-                this.$emit('updatePizzaList', 'edit');
-                $('#modalPizzaFormAddEdit').modal('hide');
+                this.$emit('updateIngredientList', 'add');
+                $('#modalIngredientFormAddEdit').modal('hide');
                 this.clearForm();
             })
             .catch(err => {
                 this.fullscreenLoading = false;
                 if(err.response && err.response.status == 422) {
                     this.errors = err.response.data.errors;
-                    this.errorsIngredients();
                 }else if(err.response.data.msg_error || err.response.data.message) {
                     Swal.fire({
                         title: 'Error!',
@@ -200,37 +161,12 @@ export default {
                 name: '',
                 price: '',
                 description: '',
-                Ingredients: [],
                 id: ''
             };
             this.errors = {};
         },
-        getAllIngredients() {
-            const url = '/api/ingredients';
-            axios.get(url)
-            .then(res => {
-                this.allIngredients = res.data;
-            })
-            .catch(err => {
-                console.error(err);
-            })
-        },
-        errorsIngredients() {
-            //Buscar los errores de los elementos del array permissions
-            if(Object.keys(this.errors).length !== 0) {
-                if(!this.errors.ingredients){
-                    for (let i = 0; i < this.allIngredients.length; i++) {
-                        if(this.errors.hasOwnProperty(`ingredients.${i}`)){
-                            this.errors.ingredients = this.errors[`ingredients.${i}`];
-                            break;
-                        }
-                    }
-                }
-            }
-        }
     },
 }
 </script>
 
-<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
